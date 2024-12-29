@@ -1,7 +1,7 @@
 {
 	"name": "@extws/adapter-redis",
 	"version": "0.2.0-beta.1",
-	"description": "",
+	"description": "Redis-based adapter for ExtWS server.",
 	"publishConfig": {
 		"access": "public"
 	},
@@ -14,10 +14,13 @@
 			"require": "./dist/main.cjs"
 		}
 	},
-	"engines": {
-		"node": ">=16"
+	"dependencies": {
+		"@extws/server": "^0.2.0-beta.5",
+		"redis": "^4.7.0"
 	},
-	"dependencies": {},
+	"peerDependencies": {
+		"@kirick/ip": "^0.1.1"
+	},
 	"devDependencies": {
 		"@kirick/eslint-config": "latest",
 		"@types/node": "^20.14.10",
@@ -33,14 +36,26 @@
 		"publish:npm": "bun run build && bun run lint && bun run test && npm publish",
 		"redis:up": "docker ps | grep test-redis >/dev/null || docker run --rm -d -p 16379:6379 --name test-redis redis:7-alpine",
 		"redis:down": "docker stop test-redis",
-		"test": "export REDIS_PORT=16379 ; bun run redis:up && npm run test:vitest && bun test --coverage",
+		"test": "npm run test:vitest && bun test --coverage",
 		"test:vitest": "vitest run --no-file-parallelism"
+	},
+	"engines": {
+		"node": ">=16"
 	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/extws-team/adapter-redis.git"
 	},
-	"keywords": [],
+	"keywords": [
+		"websocket",
+		"ws",
+		"networking",
+		"uwebsockets",
+		"extws",
+		"server",
+		"adapter",
+		"redis"
+	],
 	"author": "Daniil Kirichenko (https://twitter.com/kirickme)",
 	"license": "MIT",
 	"bugs": {
