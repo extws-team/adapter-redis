@@ -22,9 +22,9 @@
 		"@kirick/ip": "^0.1.1"
 	},
 	"devDependencies": {
-		"@kirick/eslint-config": "^0.1.30",
+		"@kirick/eslint-config": "0.1.30",
 		"@types/node": "^20.14.10",
-		"eslint": "^9.8.0",
+		"eslint": "9.10.0",
 		"typescript": "5.5.4",
 		"vitest": "2.1.1"
 	},
@@ -37,11 +37,11 @@
 		"publish:npm": "bun run lint && bun run build && bun run test && npm publish",
 		"redis:up": "docker ps | grep test-redis >/dev/null || docker run --rm -d -p 16379:6379 --name test-redis redis:7-alpine",
 		"redis:down": "docker stop test-redis",
-		"test": "bun run redis:up ; npm run test:vitest && bun test --coverage ; bun run redis:down",
+		"test": "bun run redis:up ; npm run test:vitest && bun test --coverage",
 		"test:vitest": "vitest run --no-file-parallelism"
 	},
 	"engines": {
-		"node": ">=16"
+		"node": ">=16.13"
 	},
 	"repository": {
 		"type": "git",
