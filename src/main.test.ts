@@ -6,11 +6,10 @@ import {
 	ExtWSTest,
 	TestPublishEvent,
 } from '../test/server.js';
-import {
-	ExtWSRedisAdapter,
-} from '../src/main.js';
+import { ExtWSRedisAdapter } from '../src/main.js';
 import { createClient } from 'redis';
 import {
+	GROUP_PREFIX,
 	GROUP_BROADCAST,
 } from '@extws/server/dev';
 import { TestClientPublishEvent } from '../test/client.js';
@@ -58,7 +57,7 @@ test('sendToSocket', async () => {
 test('sendToGroup', async () => {
 	const promise = second_server.wait<TestPublishEvent>(TestPublishEvent.type);
 	first_server.sendToGroup(
-		'p-test',
+		`${GROUP_PREFIX}test`,
 		{
 			foo: 'bar',
 		},
@@ -67,7 +66,7 @@ test('sendToGroup', async () => {
 	const event = await promise;
 
 	expect(event.type).toBe(TestPublishEvent.type);
-	expect(event.group_id).toBe('p-test');
+	expect(event.group_id).toBe(`${GROUP_PREFIX}test`);
 	expect(event.payload).toBe('4{"foo":"bar"}');
 });
 

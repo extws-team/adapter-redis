@@ -19,7 +19,7 @@ const REGEXP_PAYLOAD_SPLIT = /^(.{8})([0-2])([^%]+)?%/; // adapter_id (8 symbols
 
 type RedisClient = RedisClientType<RedisModules, RedisFunctions, RedisScripts>;
 
-export enum RedisTarget {
+enum RedisTarget {
 	SOCKET = '0',
 	GROUP = '1',
 }
@@ -97,7 +97,7 @@ export class ExtWSRedisAdapter {
 		);
 	}
 
-	publish(
+	private publish(
 		type: RedisTarget,
 		channel: string,
 		payload: string,
@@ -108,7 +108,7 @@ export class ExtWSRedisAdapter {
 		);
 	}
 
-	onMessage(redis_message: string) {
+	private onMessage(redis_message: string) {
 		const match = redis_message.match(REGEXP_PAYLOAD_SPLIT);
 		if (match) {
 			const [
