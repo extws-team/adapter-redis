@@ -3,20 +3,23 @@ import {
 	ExtWSClient,
 } from '@extws/server';
 import { IP } from '@kirick/ip';
+import {
+	type NeoEvent,
+	NeoEventTarget,
+} from 'neoevents';
 import { ExtWSTestClient } from './client.js';
 
-export class TestPublishEvent extends Event {
-	static type = 'test:publish';
-
-	constructor(
-		public group_id: string,
-		public payload: string,
-	) {
-		super(TestPublishEvent.type);
-	}
-}
-
 export class ExtWSTest extends ExtWS {
+	eventTarget = new NeoEventTarget<{
+		'test:publish:group': NeoEvent<{
+			group_id: string,
+			payload: string,
+		}>,
+		'test:publish:socket': NeoEvent<{
+			payload: string,
+		}>,
+	}>();
+
 	open() {
 		const client = new ExtWSTestClient(
 			this,
@@ -37,11 +40,12 @@ export class ExtWSTest extends ExtWS {
 	}
 
 	protected publish(group_id: string, payload: string) {
-		this.dispatchEvent(
-			new TestPublishEvent(
+		this.eventTarget.emit(
+			'test:publish:group',
+			{
 				group_id,
 				payload,
-			),
+			},
 		);
 	}
 }

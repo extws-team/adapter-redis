@@ -2,17 +2,13 @@ import {
 	expect,
 	test,
 } from 'vitest';
-import {
-	ExtWSTest,
-	TestPublishEvent,
-} from '../test/server.js';
+import { ExtWSTest } from '../test/server.js';
 import { ExtWSRedisAdapter } from '../src/main.js';
 import { createClient } from 'redis';
 import {
 	GROUP_PREFIX,
 	GROUP_BROADCAST,
 } from '@extws/server/dev';
-import { TestClientPublishEvent } from '../test/client.js';
 
 const first_server = new ExtWSTest();
 const second_server = new ExtWSTest();
@@ -41,7 +37,7 @@ test('sendToSocket', async () => {
 	second_server.open();
 	const client_id = second_server.clients.keys().next().value;
 
-	const promise = second_server.wait<TestClientPublishEvent>(TestClientPublishEvent.type);
+	const promise = second_server.eventTarget.wait('test:publish:socket');
 	first_server.sendToSocket(
 		client_id,
 		{
@@ -50,12 +46,11 @@ test('sendToSocket', async () => {
 	);
 
 	const event = await promise;
-	expect(event.type).toBe(TestClientPublishEvent.type);
-	expect(event.payload).toBe('4{"foo":"bar"}');
+	expect(event.detail.payload).toBe('4{"foo":"bar"}');
 });
 
 test('sendToGroup', async () => {
-	const promise = second_server.wait<TestPublishEvent>(TestPublishEvent.type);
+	const promise = second_server.eventTarget.wait('test:publish:group');
 	first_server.sendToGroup(
 		`${GROUP_PREFIX}test`,
 		{
@@ -65,13 +60,12 @@ test('sendToGroup', async () => {
 
 	const event = await promise;
 
-	expect(event.type).toBe(TestPublishEvent.type);
-	expect(event.group_id).toBe(`${GROUP_PREFIX}test`);
-	expect(event.payload).toBe('4{"foo":"bar"}');
+	expect(event.detail.group_id).toBe(`${GROUP_PREFIX}test`);
+	expect(event.detail.payload).toBe('4{"foo":"bar"}');
 });
 
 test('broadcast', async () => {
-	const promise = second_server.wait<TestPublishEvent>(TestPublishEvent.type);
+	const promise = second_server.eventTarget.wait('test:publish:group');
 	first_server.broadcast(
 		{
 			foo: 'bar',
@@ -80,7 +74,6 @@ test('broadcast', async () => {
 
 	const event = await promise;
 
-	expect(event.type).toBe(TestPublishEvent.type);
-	expect(event.group_id).toBe(GROUP_BROADCAST);
-	expect(event.payload).toBe('4{"foo":"bar"}');
+	expect(event.detail.group_id).toBe(GROUP_BROADCAST);
+	expect(event.detail.payload).toBe('4{"foo":"bar"}');
 });

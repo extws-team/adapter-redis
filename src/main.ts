@@ -1,9 +1,6 @@
 import { ExtWS } from '@extws/server';
 import {
 	OutcomePayloadEventType,
-	type OutcomePayloadSocketEvent,
-	type OutcomePayloadGroupEvent,
-	type OutcomePayloadBroadcastEvent,
 	GROUP_BROADCAST,
 } from '@extws/server/dev';
 import { randomBytes } from 'node:crypto';
@@ -46,35 +43,35 @@ export class ExtWSRedisAdapter {
 			this.initSubClient().catch(console.error);
 		}
 
-		this.server.on<OutcomePayloadSocketEvent>(
+		this.server.on(
 			OutcomePayloadEventType.SOCKET,
 			(event) => {
 				this.publish(
 					RedisTarget.SOCKET,
 					event.socket_id,
-					event.payload,
+					event.detail,
 				);
 			},
 		);
 
-		this.server.on<OutcomePayloadGroupEvent>(
+		this.server.on(
 			OutcomePayloadEventType.GROUP,
 			(event) => {
 				this.publish(
 					RedisTarget.GROUP,
 					event.group_id,
-					event.payload,
+					event.detail,
 				);
 			},
 		);
 
-		this.server.on<OutcomePayloadBroadcastEvent>(
+		this.server.on(
 			OutcomePayloadEventType.BROADCAST,
 			(event) => {
 				this.publish(
 					RedisTarget.GROUP,
 					GROUP_BROADCAST,
-					event.payload,
+					event.detail,
 				);
 			},
 		);

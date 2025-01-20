@@ -1,6 +1,6 @@
 {
 	"name": "@extws/adapter-redis",
-	"version": "0.2.0-beta.1",
+	"version": "0.2.1-beta.1",
 	"description": "Redis-based adapter for ExtWS servers",
 	"publishConfig": {
 		"access": "public"
@@ -15,7 +15,7 @@
 		}
 	},
 	"dependencies": {
-		"@extws/server": "^0.2.0-beta.5",
+		"@extws/server": "^0.2.1-beta.1",
 		"redis": "^4.7.0"
 	},
 	"peerDependencies": {
@@ -25,12 +25,12 @@
 		"@kirick/eslint-config": "0.1.30",
 		"@types/node": "^20.14.10",
 		"eslint": "9.10.0",
+		"neoevents": "0.2.0",
 		"typescript": "5.5.4",
 		"vitest": "2.1.1"
 	},
 	"scripts": {
 		"build": "bun run build:ts && bun run build:cjs",
-		"# build:cjs": "bunx esbuild --bundle --platform=node --format=cjs --packages=external --outfile=dist/main.cjs dist/esm/main.js",
 		"build:cjs": "bun build src/main.ts --outfile=dist/main.cjs --platform=node --format=cjs --packages=external",
 		"build:ts": "rm -r dist/esm dist/types ; tsc",
 		"lint": "eslint . && tsc --skipLibCheck --noemit",

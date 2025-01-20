@@ -25,13 +25,13 @@ export class ExtWSRedisAdapter {
             this.initSubClient().catch(console.error);
         }
         this.server.on(OutcomePayloadEventType.SOCKET, (event) => {
-            this.publish(RedisTarget.SOCKET, event.socket_id, event.payload);
+            this.publish(RedisTarget.SOCKET, event.socket_id, event.detail);
         });
         this.server.on(OutcomePayloadEventType.GROUP, (event) => {
-            this.publish(RedisTarget.GROUP, event.group_id, event.payload);
+            this.publish(RedisTarget.GROUP, event.group_id, event.detail);
         });
         this.server.on(OutcomePayloadEventType.BROADCAST, (event) => {
-            this.publish(RedisTarget.GROUP, GROUP_BROADCAST, event.payload);
+            this.publish(RedisTarget.GROUP, GROUP_BROADCAST, event.detail);
         });
     }
     async initSubClient() {

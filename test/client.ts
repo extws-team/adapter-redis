@@ -1,22 +1,17 @@
 /* eslint-disable class-methods-use-this */
-/* eslint-disable no-warning-comments */
 
 import { ExtWSClient } from '@extws/server';
-
-// TODO: remove when drop support for nodejs <23
-export class TestClientPublishEvent extends Event {
-	static type = 'test:client:publish';
-
-	constructor(public payload: string) {
-		super(TestClientPublishEvent.type);
-	}
-}
+import { ExtWSTest } from './server.js';
 
 export class ExtWSTestClient extends ExtWSClient {
+	declare server: ExtWSTest;
+
 	protected sendPayload(payload: string) {
-		this.server.dispatchEvent(
-			// TODO: replace with CustomEvent when drop support for nodejs <23
-			new TestClientPublishEvent(payload),
+		this.server.eventTarget.emit(
+			'test:publish:socket',
+			{
+				payload,
+			},
 		);
 	}
 
