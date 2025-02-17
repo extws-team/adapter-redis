@@ -15,7 +15,7 @@
 		}
 	},
 	"dependencies": {
-		"@extws/server": "^0.2.1-beta.1",
+		"@extws/server": "github:extws-team/server#dev-kirick",
 		"redis": "^4.7.0"
 	},
 	"peerDependencies": {

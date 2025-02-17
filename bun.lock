@@ -1,10 +1,10 @@
 {
-  "lockfileVersion": 0,
+  "lockfileVersion": 1,
   "workspaces": {
     "": {
       "name": "extws-adapter-redis",
       "dependencies": {
-        "@extws/server": "^0.2.1-beta.1",
+        "@extws/server": "github:extws-team/server#dev-kirick",
         "redis": "^4.7.0",
       },
       "devDependencies": {
@@ -87,7 +87,7 @@
 
     "@eslint/plugin-kit": ["@eslint/plugin-kit@0.1.0", "", { "dependencies": { "levn": "^0.4.1" } }, "sha512-autAXT203ixhqei9xt+qkYOvY8l6LAFIdT2UXc/RPNeUVfqRF1BV94GTJyVPFKT8nFM6MyVJhjLj9E8JWvf5zQ=="],
 
-    "@extws/server": ["@extws/server@0.2.1-beta.1", "", { "dependencies": { "nanoid": "4.0.2", "neoevents": "^0.2.0" }, "peerDependencies": { "@kirick/ip": "^0.1.1" } }, "sha512-lXM6rJ1PXkeR3j/BaO+Yod2BkV5SufJ8HaW7bBfhJAqobnUPJawNvZX51Zq6whFN8dKAmoMjFMznP75oHAvYVw=="],
+    "@extws/server": ["@extws/server@github:extws-team/server#868a35e", { "dependencies": { "nanoid": "4.0.2", "neoevents": "^0.2.0" }, "peerDependencies": { "@kirick/ip": "^0.1.1" } }, "extws-team-server-868a35e"],
 
     "@humanwhocodes/module-importer": ["@humanwhocodes/module-importer@1.0.1", "", {}, "sha512-bxveV4V8v5Yb4ncFTT3rPSgZBOpCkjfK0y4oVVVJwIuDVBRMDXrPyXRL988i5ap9m9bnyEEjWfm5WkBmtffLfA=="],
 
