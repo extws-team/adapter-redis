@@ -1,6 +1,6 @@
 {
 	"name": "@extws/adapter-redis",
-	"version": "0.2.1-beta.1",
+	"version": "0.2.1-dev",
 	"description": "Redis-based adapter for ExtWS servers",
 	"publishConfig": {
 		"access": "public"
@@ -15,11 +15,11 @@
 		}
 	},
 	"dependencies": {
-		"@extws/server": "github:extws-team/server#dev-kirick",
-		"redis": "^4.7.0"
+		"@extws/server": "github:extws-team/server#dev-kirick"
 	},
 	"peerDependencies": {
-		"@kirick/ip": "^0.1.1"
+		"@kirick/ip": "^0.1.1",
+		"redis": "^4.6.12"
 	},
 	"devDependencies": {
 		"@kirick/eslint-config": "0.1.30",
@@ -33,8 +33,8 @@
 		"build": "bun run build:ts && bun run build:cjs",
 		"build:cjs": "bun build src/main.ts --outfile=dist/main.cjs --platform=node --format=cjs --packages=external",
 		"build:ts": "rm -r dist/esm dist/types ; tsc",
+		"check": "bun run lint && bun run build && bun run test",
 		"lint": "eslint . && tsc --skipLibCheck --noemit",
-		"publish:npm": "bun run lint && bun run build && bun run test && npm publish",
 		"redis:up": "docker ps | grep test-redis >/dev/null || docker run --rm -d -p 16379:6379 --name test-redis redis:7-alpine",
 		"redis:down": "docker stop test-redis",
 		"test": "bun run redis:up ; npm run test:vitest && bun test --coverage",
