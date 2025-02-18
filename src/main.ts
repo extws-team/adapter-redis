@@ -1,8 +1,5 @@
 import { ExtWS } from '@extws/server';
-import {
-	OutcomePayloadEventType,
-	GROUP_BROADCAST,
-} from '@extws/server/dev';
+import { OutcomePayloadEventType } from '@extws/server/dev';
 import { randomBytes } from 'node:crypto';
 import type {
 	RedisClientType,
@@ -55,22 +52,11 @@ export class ExtWSRedisAdapter {
 		);
 
 		this.server.on(
-			OutcomePayloadEventType.GROUP,
+			OutcomePayloadEventType.CHANNEL,
 			(event) => {
 				this.publish(
 					RedisTarget.GROUP,
-					event.group_id,
-					event.detail,
-				);
-			},
-		);
-
-		this.server.on(
-			OutcomePayloadEventType.BROADCAST,
-			(event) => {
-				this.publish(
-					RedisTarget.GROUP,
-					GROUP_BROADCAST,
+					event.channel_id,
 					event.detail,
 				);
 			},

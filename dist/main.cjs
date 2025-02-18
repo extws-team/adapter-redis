@@ -55,11 +55,8 @@ class ExtWSRedisAdapter {
     this.server.on(import_dev.OutcomePayloadEventType.SOCKET, (event) => {
       this.publish("0" /* SOCKET */, event.socket_id, event.detail);
     });
-    this.server.on(import_dev.OutcomePayloadEventType.GROUP, (event) => {
-      this.publish("1" /* GROUP */, event.group_id, event.detail);
-    });
-    this.server.on(import_dev.OutcomePayloadEventType.BROADCAST, (event) => {
-      this.publish("1" /* GROUP */, import_dev.GROUP_BROADCAST, event.detail);
+    this.server.on(import_dev.OutcomePayloadEventType.CHANNEL, (event) => {
+      this.publish("1" /* GROUP */, event.channel_id, event.detail);
     });
   }
   async initSubClient() {

@@ -11,8 +11,8 @@ import { ExtWSTestClient } from './client.js';
 
 export class ExtWSTest extends ExtWS {
 	eventTarget = new NeoEventTarget<{
-		'test:publish:group': NeoEvent<{
-			group_id: string,
+		'test:publish:channel': NeoEvent<{
+			channel_id: string,
 			payload: string,
 		}>,
 		'test:publish:socket': NeoEvent<{
@@ -39,11 +39,11 @@ export class ExtWSTest extends ExtWS {
 		super.onMessage(client, payload);
 	}
 
-	protected publish(group_id: string, payload: string) {
+	protected publish(channel_id: string, payload: string) {
 		this.eventTarget.emit(
-			'test:publish:group',
+			'test:publish:channel',
 			{
-				group_id,
+				channel_id,
 				payload,
 			},
 		);

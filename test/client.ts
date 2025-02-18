@@ -15,11 +15,11 @@ export class ExtWSTestClient extends ExtWSClient {
 		);
 	}
 
-	protected addToGroup(_group_id: string) {
+	protected addToChannel(_channel_id: string) {
 		// do nothing
 	}
 
-	protected removeFromGroup(_group_id: string) {
+	protected removeFromChannel(_channel_id: string) {
 		// do nothing
 	}
 }

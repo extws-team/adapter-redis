@@ -6,12 +6,12 @@ import { ExtWSTest } from '../test/server.js';
 import { ExtWSRedisAdapter } from '../src/main.js';
 import { createClient } from 'redis';
 import {
-	GROUP_PREFIX,
-	GROUP_BROADCAST,
+	CHANNEL_GROUP_PREFIX,
+	CHANNEL_BROADCAST,
 } from '@extws/server/dev';
 
-const first_server = new ExtWSTest();
-const second_server = new ExtWSTest();
+const first_server = new ExtWSTest({});
+const second_server = new ExtWSTest({});
 
 const pub_client = createClient({
 	url: 'redis://localhost:16379',
@@ -50,9 +50,9 @@ test('sendToSocket', async () => {
 });
 
 test('sendToGroup', async () => {
-	const promise = second_server.eventTarget.wait('test:publish:group');
+	const promise = second_server.eventTarget.wait('test:publish:channel');
 	first_server.sendToGroup(
-		`${GROUP_PREFIX}test`,
+		'test',
 		{
 			foo: 'bar',
 		},
@@ -60,12 +60,12 @@ test('sendToGroup', async () => {
 
 	const event = await promise;
 
-	expect(event.detail.group_id).toBe(`${GROUP_PREFIX}test`);
+	expect(event.detail.channel_id).toBe(`${CHANNEL_GROUP_PREFIX}test`);
 	expect(event.detail.payload).toBe('4{"foo":"bar"}');
 });
 
 test('broadcast', async () => {
-	const promise = second_server.eventTarget.wait('test:publish:group');
+	const promise = second_server.eventTarget.wait('test:publish:channel');
 	first_server.broadcast(
 		{
 			foo: 'bar',
@@ -74,6 +74,6 @@ test('broadcast', async () => {
 
 	const event = await promise;
 
-	expect(event.detail.group_id).toBe(GROUP_BROADCAST);
+	expect(event.detail.channel_id).toBe(CHANNEL_BROADCAST);
 	expect(event.detail.payload).toBe('4{"foo":"bar"}');
 });
