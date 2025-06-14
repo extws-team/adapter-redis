@@ -25,7 +25,7 @@ export class ExtWSTest extends ExtWS {
 			this,
 			{
 				url: new URL('http://ws'),
-				headers: new Map(),
+				headers: new Headers(),
 				ip: new IP('::1'),
 			},
 		);
@@ -35,11 +35,11 @@ export class ExtWSTest extends ExtWS {
 		return client;
 	}
 
-	onMessage(client: ExtWSClient, payload: string): void {
+	override onMessage(client: ExtWSClient, payload: string): void {
 		super.onMessage(client, payload);
 	}
 
-	protected publish(channel_id: string, payload: string) {
+	protected override publish(channel_id: string, payload: string): void {
 		this.eventTarget.emit(
 			'test:publish:channel',
 			{

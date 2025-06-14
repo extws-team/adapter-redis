@@ -105,7 +105,7 @@ export class ExtWSRedisAdapter {
 				const payload = redis_message.slice(matched.length);
 
 				if (type === RedisTarget.SOCKET) {
-					const client = this.server.clients.get(dest_id);
+					const client = this.server.clients.get(dest_id!);
 					if (client) {
 						// @ts-expect-error Protected property
 						client.sendPayload(payload);
@@ -114,7 +114,7 @@ export class ExtWSRedisAdapter {
 				else if (type === RedisTarget.GROUP) {
 					// @ts-expect-error Protected property
 					this.server.publish(
-						dest_id,
+						dest_id!,
 						payload,
 					);
 				}

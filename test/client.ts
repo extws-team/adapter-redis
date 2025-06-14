@@ -6,7 +6,7 @@ import { ExtWSTest } from './server.js';
 export class ExtWSTestClient extends ExtWSClient {
 	declare server: ExtWSTest;
 
-	protected sendPayload(payload: string) {
+	protected override sendPayload(payload: string): void {
 		this.server.eventTarget.emit(
 			'test:publish:socket',
 			{
@@ -15,11 +15,11 @@ export class ExtWSTestClient extends ExtWSClient {
 		);
 	}
 
-	protected addToChannel(_channel_id: string) {
+	protected override addToChannel(_channel_id: string): void {
 		// do nothing
 	}
 
-	protected removeFromChannel(_channel_id: string) {
+	protected override removeFromChannel(_channel_id: string): void {
 		// do nothing
 	}
 }

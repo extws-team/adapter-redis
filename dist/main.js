@@ -1,29 +1,6 @@
-//#region rolldown:runtime
-var __create = Object.create;
-var __defProp = Object.defineProperty;
-var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-var __getOwnPropNames = Object.getOwnPropertyNames;
-var __getProtoOf = Object.getPrototypeOf;
-var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __copyProps = (to, from, except, desc) => {
-	if (from && typeof from === "object" || typeof from === "function") for (var keys = __getOwnPropNames(from), i = 0, n = keys.length, key; i < n; i++) {
-		key = keys[i];
-		if (!__hasOwnProp.call(to, key) && key !== except) __defProp(to, key, {
-			get: ((k) => from[k]).bind(null, key),
-			enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable
-		});
-	}
-	return to;
-};
-var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", {
-	value: mod,
-	enumerable: true
-}) : target, mod));
-
-//#endregion
-require("@extws/server");
-const __extws_server_dev = __toESM(require("@extws/server/dev"));
-const node_crypto = __toESM(require("node:crypto"));
+import { ExtWS } from "@extws/server";
+import { OutcomePayloadEventType } from "@extws/server/dev";
+import { randomBytes } from "node:crypto";
 
 //#region src/main.ts
 const REDIS_PUBSUB_CHANNEL = "extws";
@@ -42,15 +19,15 @@ var ExtWSRedisAdapter = class {
 		this.server = server;
 		server.has_adapter = true;
 		this.pub_client = pub_client;
-		this.id = (0, node_crypto.randomBytes)(6).toString("base64url");
+		this.id = randomBytes(6).toString("base64url");
 		if (!write_only) {
 			this.sub_client = this.pub_client.duplicate();
 			this.initSubClient().catch(console.error);
 		}
-		this.server.on(__extws_server_dev.OutcomePayloadEventType.SOCKET, (event) => {
+		this.server.on(OutcomePayloadEventType.SOCKET, (event) => {
 			this.publish(RedisTarget.SOCKET, event.socket_id, event.detail);
 		});
-		this.server.on(__extws_server_dev.OutcomePayloadEventType.CHANNEL, (event) => {
+		this.server.on(OutcomePayloadEventType.CHANNEL, (event) => {
 			this.publish(RedisTarget.GROUP, event.channel_id, event.detail);
 		});
 	}
@@ -80,4 +57,4 @@ var ExtWSRedisAdapter = class {
 };
 
 //#endregion
-exports.ExtWSRedisAdapter = ExtWSRedisAdapter;
+export { ExtWSRedisAdapter };
