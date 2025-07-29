@@ -1,4 +1,4 @@
-import { ExtWS } from '@extws/server';
+import type { ExtWS } from '@extws/server';
 import { OutcomePayloadEventType } from '@extws/server/dev';
 import { randomBytes } from 'node:crypto';
 import type {
@@ -27,10 +27,7 @@ export class ExtWSRedisAdapter {
 		private pub_client: RedisClient,
 		write_only: boolean = false,
 	) {
-		this.server = server;
 		server.has_adapter = true;
-
-		this.pub_client = pub_client;
 
 		this.id = randomBytes(6).toString('base64url'); // 8 symbols
 
@@ -107,12 +104,12 @@ export class ExtWSRedisAdapter {
 				if (type === RedisTarget.SOCKET) {
 					const client = this.server.clients.get(dest_id!);
 					if (client) {
-						// @ts-expect-error Protected property
+						// @ts-expect-error - Protected property
 						client.sendPayload(payload);
 					}
 				}
 				else if (type === RedisTarget.GROUP) {
-					// @ts-expect-error Protected property
+					// @ts-expect-error - Protected property
 					this.server.publish(
 						dest_id!,
 						payload,

@@ -1,4 +1,3 @@
-import { ExtWS } from "@extws/server";
 import { OutcomePayloadEventType } from "@extws/server/dev";
 import { randomBytes } from "node:crypto";
 
@@ -16,9 +15,7 @@ var ExtWSRedisAdapter = class {
 	constructor(server, pub_client, write_only = false) {
 		this.server = server;
 		this.pub_client = pub_client;
-		this.server = server;
 		server.has_adapter = true;
-		this.pub_client = pub_client;
 		this.id = randomBytes(6).toString("base64url");
 		if (!write_only) {
 			this.sub_client = this.pub_client.duplicate();

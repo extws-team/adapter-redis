@@ -3,9 +3,6 @@
   "workspaces": {
     "": {
       "name": "@extws/adapter-redis",
-      "dependencies": {
-        "@extws/server": "github:extws-team/server#9625673278a8a7539883bf0b6afdbdd44f9c9402",
-      },
       "devDependencies": {
         "@kirick/eslint-config": "0.1.30",
         "@kirick/ip": "^0.1.1",
@@ -19,6 +16,7 @@
         "vitest": "3.2.3",
       },
       "peerDependencies": {
+        "@extws/server": "github:extws-team/server#1ed25c3594be3481e34abb3dd1a1c11578ab69b7",
         "redis": "^4.6.12",
       },
     },
@@ -104,7 +102,7 @@
 
     "@eslint/plugin-kit": ["@eslint/plugin-kit@0.1.0", "", { "dependencies": { "levn": "^0.4.1" } }, "sha512-autAXT203ixhqei9xt+qkYOvY8l6LAFIdT2UXc/RPNeUVfqRF1BV94GTJyVPFKT8nFM6MyVJhjLj9E8JWvf5zQ=="],
 
-    "@extws/server": ["@extws/server@github:extws-team/server#9625673", { "dependencies": { "nanoid": "3.3.8", "neoevents": "^0.2.0" }, "peerDependencies": { "@kirick/ip": "^0.1.1" } }, "extws-team-server-9625673"],
+    "@extws/server": ["@extws/server@github:extws-team/server#1ed25c3", { "dependencies": { "nanoid": "3.3.8", "neoevents": "0.3.0" }, "peerDependencies": { "@kirick/ip": "^0.1.1" } }, "extws-team-server-1ed25c3"],
 
     "@humanwhocodes/module-importer": ["@humanwhocodes/module-importer@1.0.1", "", {}, "sha512-bxveV4V8v5Yb4ncFTT3rPSgZBOpCkjfK0y4oVVVJwIuDVBRMDXrPyXRL988i5ap9m9bnyEEjWfm5WkBmtffLfA=="],
 
@@ -717,6 +715,8 @@
     "@eslint-community/eslint-utils/eslint-visitor-keys": ["eslint-visitor-keys@3.4.3", "", {}, "sha512-wpc+LXeiyiisxPlEkUzU6svyS1frIO3Mgxj1fdy7Pm8Ygzguax2N3Fa/D/ag1WqbOprdI+uY6wMUl8/a2G+iag=="],
 
     "@eslint/eslintrc/globals": ["globals@14.0.0", "", {}, "sha512-oahGvuMGQlPw/ivIYBjVSrWAfWLBeku5tpPE2fOPLi+WHffIWbuh2tCjhyQhTBPMf5E9jDEH4FOmTYgYwbKwtQ=="],
+
+    "@extws/server/neoevents": ["neoevents@0.3.0", "", {}, "sha512-et9vcJ8ElRUbgxeJXAw++1noXVY302fxRvwEoIDll9KiQAeySjTQBdLtATvtE17MgbitLjjixI5UcFOS92EI+w=="],
 
     "@typescript-eslint/typescript-estree/minimatch": ["minimatch@9.0.5", "", { "dependencies": { "brace-expansion": "^2.0.1" } }, "sha512-G6T0ZX48xgozx7587koeX9Ys2NYy6Gmv//P89sEte9V9whIapMNF4idKxnW2QtCcLiTWlb/wfCabAtAFWhhBow=="],
 

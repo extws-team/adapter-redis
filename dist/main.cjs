@@ -21,7 +21,6 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 }) : target, mod));
 
 //#endregion
-require("@extws/server");
 const __extws_server_dev = __toESM(require("@extws/server/dev"));
 const node_crypto = __toESM(require("node:crypto"));
 
@@ -39,9 +38,7 @@ var ExtWSRedisAdapter = class {
 	constructor(server, pub_client, write_only = false) {
 		this.server = server;
 		this.pub_client = pub_client;
-		this.server = server;
 		server.has_adapter = true;
-		this.pub_client = pub_client;
 		this.id = (0, node_crypto.randomBytes)(6).toString("base64url");
 		if (!write_only) {
 			this.sub_client = this.pub_client.duplicate();

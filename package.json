@@ -21,10 +21,8 @@
 	"engines": {
 		"node": ">=21"
 	},
-	"dependencies": {
-		"@extws/server": "github:extws-team/server#9625673278a8a7539883bf0b6afdbdd44f9c9402"
-	},
 	"peerDependencies": {
+		"@extws/server": "github:extws-team/server#1ed25c3594be3481e34abb3dd1a1c11578ab69b7",
 		"redis": "^4.6.12"
 	},
 	"devDependencies": {
