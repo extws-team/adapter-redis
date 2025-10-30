@@ -22,25 +22,27 @@
 		"node": ">=21"
 	},
 	"peerDependencies": {
-		"@extws/server": "github:extws-team/server#1ed25c3594be3481e34abb3dd1a1c11578ab69b7",
+		"@extws/server": "github:extws-team/server#ff4babb8f048976d66f1cb75510494bfccb5126a",
 		"redis": "^4.6.12"
 	},
 	"devDependencies": {
-		"@kirick/eslint-config": "0.1.30",
+		"@biomejs/biome": "2.3.1",
 		"@kirick/ip": "^0.1.1",
-		"@types/node": "^20.14.10",
-		"eslint": "9.10.0",
+		"@kirick/lint": "0.2.12",
+		"@types/node": "^20",
+		"eslint": "9.38.0",
 		"neoevents": "0.2.0",
-		"publint": "0.3.12",
-		"tsdown": "0.12.2",
-		"typescript": "5.8.3",
-		"unplugin-unused": "0.5.0",
-		"vitest": "3.2.3"
+		"oxlint": "1.24.0",
+		"publint": "0.3.15",
+		"tsdown": "0.15.11",
+		"typescript": "5.9.3",
+		"unplugin-unused": "0.5.4",
+		"vitest": "4.0.4"
 	},
 	"scripts": {
-		"build": "tsdown src/main.ts --clean --publint --unused --dts --format esm --format cjs",
+		"build": "tsdown src/main.ts --clean --tsconfig tsconfig.main.json --publint --unused --dts --format esm --format cjs",
 		"check": "bun run lint && bun run build && bun run test",
-		"lint": "eslint . && tsc && (cd test && tsc)",
+		"lint": "biome format && oxlint && eslint . && tsc -b",
 		"redis:up": "docker ps | grep test-redis >/dev/null || docker run --rm -d -p 16379:6379 --name test-redis redis:7-alpine",
 		"redis:down": "docker stop test-redis",
 		"test": "bun run redis:up ; npm run test:vitest && bun test --coverage",

@@ -1,34 +1,25 @@
-import {
-	ExtWS,
-	ExtWSClient,
-} from '@extws/server';
+import { ExtWS, ExtWSClient } from '@extws/server';
 import { IP } from '@kirick/ip';
-import {
-	type NeoEvent,
-	NeoEventTarget,
-} from 'neoevents';
+import { type NeoEvent, NeoEventTarget } from 'neoevents';
 import { ExtWSTestClient } from './client.js';
 
 export class ExtWSTest extends ExtWS {
 	eventTarget = new NeoEventTarget<{
 		'test:publish:channel': NeoEvent<{
-			channel_id: string,
-			payload: string,
-		}>,
+			channel_id: string;
+			payload: string;
+		}>;
 		'test:publish:socket': NeoEvent<{
-			payload: string,
-		}>,
+			payload: string;
+		}>;
 	}>();
 
 	open() {
-		const client = new ExtWSTestClient(
-			this,
-			{
-				url: new URL('http://ws'),
-				headers: new Headers(),
-				ip: new IP('::1'),
-			},
-		);
+		const client = new ExtWSTestClient(this, {
+			url: new URL('http://ws'),
+			headers: new Headers(),
+			ip: new IP('::1'),
+		});
 
 		this.onConnect(client);
 
@@ -40,12 +31,9 @@ export class ExtWSTest extends ExtWS {
 	}
 
 	protected override publish(channel_id: string, payload: string): void {
-		this.eventTarget.emit(
-			'test:publish:channel',
-			{
-				channel_id,
-				payload,
-			},
-		);
+		this.eventTarget.emit('test:publish:channel', {
+			channel_id,
+			payload,
+		});
 	}
 }

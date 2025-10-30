@@ -1,10 +1,10 @@
+import { randomBytes } from 'node:crypto';
 import type { ExtWS } from '@extws/server';
 import { OutcomePayloadEventType } from '@extws/server/dev';
-import { randomBytes } from 'node:crypto';
 import type {
 	RedisClientType,
-	RedisModules,
 	RedisFunctions,
+	RedisModules,
 	RedisScripts,
 } from 'redis';
 
@@ -33,55 +33,34 @@ export class ExtWSRedisAdapter {
 
 		if (!write_only) {
 			this.sub_client = this.pub_client.duplicate();
-			// eslint-disable-next-line no-console
+			// oxlint-disable-next-line no-console
 			this.initSubClient().catch(console.error);
 		}
 
-		this.server.on(
-			OutcomePayloadEventType.SOCKET,
-			(event) => {
-				this.publish(
-					RedisTarget.SOCKET,
-					event.socket_id,
-					event.detail,
-				);
-			},
-		);
+		this.server.on(OutcomePayloadEventType.SOCKET, (event) => {
+			this.publish(RedisTarget.SOCKET, event.socket_id, event.detail);
+		});
 
-		this.server.on(
-			OutcomePayloadEventType.CHANNEL,
-			(event) => {
-				this.publish(
-					RedisTarget.GROUP,
-					event.channel_id,
-					event.detail,
-				);
-			},
-		);
+		this.server.on(OutcomePayloadEventType.CHANNEL, (event) => {
+			this.publish(RedisTarget.GROUP, event.channel_id, event.detail);
+		});
 	}
 
 	private async initSubClient() {
 		await this.sub_client!.connect();
 
-		this.sub_client!.subscribe(
-			REDIS_PUBSUB_CHANNEL,
-			(redis_message) => {
-				this.onMessage(redis_message);
-			},
-		);
+		this.sub_client!.subscribe(REDIS_PUBSUB_CHANNEL, (redis_message) => {
+			this.onMessage(redis_message);
+		});
 
 		this.sub_client!.on(
 			'error',
-			// eslint-disable-next-line no-console
+			// oxlint-disable-next-line no-console
 			console.error,
 		);
 	}
 
-	private publish(
-		type: RedisTarget,
-		channel: string,
-		payload: string,
-	) {
+	private publish(type: RedisTarget, channel: string, payload: string) {
 		this.pub_client.PUBLISH(
 			REDIS_PUBSUB_CHANNEL,
 			`${this.id}${type}${channel}%${payload}`,
@@ -91,12 +70,7 @@ export class ExtWSRedisAdapter {
 	private onMessage(redis_message: string) {
 		const match = redis_message.match(REGEXP_PAYLOAD_SPLIT);
 		if (match) {
-			const [
-				matched,
-				adapter_id,
-				type,
-				dest_id,
-			] = match;
+			const [matched, adapter_id, type, dest_id] = match;
 
 			if (adapter_id !== this.id) {
 				const payload = redis_message.slice(matched.length);
@@ -107,13 +81,9 @@ export class ExtWSRedisAdapter {
 						// @ts-expect-error - Protected property
 						client.sendPayload(payload);
 					}
-				}
-				else if (type === RedisTarget.GROUP) {
+				} else if (type === RedisTarget.GROUP) {
 					// @ts-expect-error - Protected property
-					this.server.publish(
-						dest_id!,
-						payload,
-					);
+					this.server.publish(dest_id!, payload);
 				}
 			}
 		}

@@ -21,8 +21,10 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 }) : target, mod));
 
 //#endregion
-const __extws_server_dev = __toESM(require("@extws/server/dev"));
-const node_crypto = __toESM(require("node:crypto"));
+let node_crypto = require("node:crypto");
+node_crypto = __toESM(node_crypto);
+let __extws_server_dev = require("@extws/server/dev");
+__extws_server_dev = __toESM(__extws_server_dev);
 
 //#region src/main.ts
 const REDIS_PUBSUB_CHANNEL = "extws";

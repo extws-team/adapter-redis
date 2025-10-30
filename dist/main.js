@@ -1,5 +1,5 @@
-import { OutcomePayloadEventType } from "@extws/server/dev";
 import { randomBytes } from "node:crypto";
+import { OutcomePayloadEventType } from "@extws/server/dev";
 
 //#region src/main.ts
 const REDIS_PUBSUB_CHANNEL = "extws";

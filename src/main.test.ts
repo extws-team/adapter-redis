@@ -1,32 +1,20 @@
-import {
-	expect,
-	test,
-} from 'vitest';
-import { ExtWSTest } from '../test/server.js';
-import { ExtWSRedisAdapter } from '../src/main.js';
+import { CHANNEL_BROADCAST, CHANNEL_GROUP_PREFIX } from '@extws/server/dev';
 import { createClient } from 'redis';
-import {
-	CHANNEL_GROUP_PREFIX,
-	CHANNEL_BROADCAST,
-} from '@extws/server/dev';
+import { expect, test } from 'vitest';
+import { ExtWSRedisAdapter } from '../src/main.js';
+import { ExtWSTest } from '../test/server.js';
 
-const first_server = new ExtWSTest({});
-const second_server = new ExtWSTest({});
+const first_server = new ExtWSTest();
+const second_server = new ExtWSTest();
 
 const pub_client = createClient({
 	url: 'redis://localhost:16379',
 });
 await pub_client.connect();
 
-const _first_adapter = new ExtWSRedisAdapter(
-	first_server,
-	pub_client,
-);
+const _first_adapter = new ExtWSRedisAdapter(first_server, pub_client);
 
-const _second_adapter = new ExtWSRedisAdapter(
-	second_server,
-	pub_client,
-);
+const _second_adapter = new ExtWSRedisAdapter(second_server, pub_client);
 
 // let the sub_client connect
 await new Promise((resolve) => {
@@ -36,14 +24,14 @@ await new Promise((resolve) => {
 test('sendToSocket', async () => {
 	second_server.open();
 	const client_id = second_server.clients.keys().next().value;
+	if (client_id === undefined) {
+		throw new Error('No client ID found on the server.');
+	}
 
 	const promise = second_server.eventTarget.wait('test:publish:socket');
-	first_server.sendToSocket(
-		client_id,
-		{
-			foo: 'bar',
-		},
-	);
+	first_server.sendToSocket(client_id, {
+		foo: 'bar',
+	});
 
 	const event = await promise;
 	expect(event.detail.payload).toBe('4{"foo":"bar"}');
@@ -51,12 +39,9 @@ test('sendToSocket', async () => {
 
 test('sendToGroup', async () => {
 	const promise = second_server.eventTarget.wait('test:publish:channel');
-	first_server.sendToGroup(
-		'test',
-		{
-			foo: 'bar',
-		},
-	);
+	first_server.sendToGroup('test', {
+		foo: 'bar',
+	});
 
 	const event = await promise;
 
@@ -66,11 +51,9 @@ test('sendToGroup', async () => {
 
 test('broadcast', async () => {
 	const promise = second_server.eventTarget.wait('test:publish:channel');
-	first_server.broadcast(
-		{
-			foo: 'bar',
-		},
-	);
+	first_server.broadcast({
+		foo: 'bar',
+	});
 
 	const event = await promise;
 
