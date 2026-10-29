@@ -8,6 +8,7 @@ var ExtWSRedisAdapter = class {
 	pub_client;
 	sub_client;
 	id;
+	server_listeners_off;
 	constructor(server, pub_client, is_write_only = false) {
 		this.server = server;
 		this.pub_client = pub_client;
@@ -17,26 +18,38 @@ var ExtWSRedisAdapter = class {
 			this.sub_client = this.pub_client.duplicate();
 			this.initSubClient();
 		}
-		this.server.on(OutcomePayloadEventType.SOCKET, (event) => {
+		this.server_listeners_off = [this.server.on(OutcomePayloadEventType.SOCKET, (event) => {
 			this.publish("0", event.socket_id, event.detail);
-		});
-		this.server.on(OutcomePayloadEventType.CHANNEL, (event) => {
+		}), this.server.on(OutcomePayloadEventType.CHANNEL, (event) => {
 			this.publish("1", event.channel_id, event.detail);
-		});
+		})];
+	}
+	/**
+	* Detaches the adapter from the server and closes the connection receiving messages from other servers.
+	* The Redis client passed to the adapter stays open.
+	*/
+	async close() {
+		for (const off of this.server_listeners_off) off();
+		this.server.has_adapter = false;
+		if (this.sub_client?.isOpen) await this.sub_client.disconnect();
 	}
 	async initSubClient() {
+		this.sub_client.on("error", console.error);
 		try {
 			await this.sub_client.connect();
-			this.sub_client.subscribe(REDIS_PUBSUB_CHANNEL, (redis_message) => {
+			await this.sub_client.subscribe(REDIS_PUBSUB_CHANNEL, (redis_message) => {
 				this.onMessage(redis_message);
 			});
-			this.sub_client.on("error", console.error);
 		} catch (error) {
 			console.error(error);
 		}
 	}
-	publish(type, channel, payload) {
-		this.pub_client.PUBLISH(REDIS_PUBSUB_CHANNEL, `${this.id}${type}${channel}%${payload}`);
+	async publish(type, channel, payload) {
+		try {
+			await this.pub_client.PUBLISH(REDIS_PUBSUB_CHANNEL, `${this.id}${type}${channel}%${payload}`);
+		} catch (error) {
+			console.error(error);
+		}
 	}
 	onMessage(redis_message) {
 		const match = redis_message.match(REGEXP_PAYLOAD_SPLIT);

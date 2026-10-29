@@ -26,6 +26,7 @@ enum RedisTarget {
 export class ExtWSRedisAdapter {
 	private sub_client?: RedisClient;
 	private id: string;
+	private server_listeners_off: (() => void)[];
 
 	constructor(
 		private server: ExtWS<Record<string, unknown> | undefined>,
@@ -41,27 +42,48 @@ export class ExtWSRedisAdapter {
 			this.initSubClient();
 		}
 
-		this.server.on(OutcomePayloadEventType.SOCKET, (event) => {
-			this.publish(RedisTarget.SOCKET, event.socket_id, event.detail);
-		});
+		this.server_listeners_off = [
+			this.server.on(OutcomePayloadEventType.SOCKET, (event) => {
+				this.publish(RedisTarget.SOCKET, event.socket_id, event.detail);
+			}),
+			this.server.on(OutcomePayloadEventType.CHANNEL, (event) => {
+				this.publish(RedisTarget.GROUP, event.channel_id, event.detail);
+			}),
+		];
+	}
 
-		this.server.on(OutcomePayloadEventType.CHANNEL, (event) => {
-			this.publish(RedisTarget.GROUP, event.channel_id, event.detail);
-		});
+	/**
+	 * Detaches the adapter from the server and closes the connection receiving messages from other servers.
+	 * The Redis client passed to the adapter stays open.
+	 */
+	async close(): Promise<void> {
+		for (const off of this.server_listeners_off) {
+			off();
+		}
+
+		this.server.has_adapter = false;
+
+		if (this.sub_client?.isOpen) {
+			await this.sub_client.disconnect();
+		}
 	}
 
 	private async initSubClient() {
+		// listen before connecting, an `error` event without a listener crashes the process
+		this.sub_client!.on(
+			'error',
+			// oxlint-disable-next-line no-console
+			console.error,
+		);
+
 		try {
 			await this.sub_client!.connect();
 
-			this.sub_client!.subscribe(REDIS_PUBSUB_CHANNEL, (redis_message) => {
-				this.onMessage(redis_message);
-			});
-
-			this.sub_client!.on(
-				'error',
-				// oxlint-disable-next-line no-console
-				console.error,
+			await this.sub_client!.subscribe(
+				REDIS_PUBSUB_CHANNEL,
+				(redis_message) => {
+					this.onMessage(redis_message);
+				},
 			);
 		} catch (error) {
 			// oxlint-disable-next-line no-console
@@ -69,11 +91,17 @@ export class ExtWSRedisAdapter {
 		}
 	}
 
-	private publish(type: RedisTarget, channel: string, payload: string) {
-		this.pub_client.PUBLISH(
-			REDIS_PUBSUB_CHANNEL,
-			`${this.id}${type}${channel}%${payload}`,
-		);
+	private async publish(type: RedisTarget, channel: string, payload: string) {
+		try {
+			await this.pub_client.PUBLISH(
+				REDIS_PUBSUB_CHANNEL,
+				`${this.id}${type}${channel}%${payload}`,
+			);
+		} catch (error) {
+			// nobody awaits this call, so a rejection would crash the process
+			// oxlint-disable-next-line no-console
+			console.error(error);
+		}
 	}
 
 	private onMessage(redis_message: string) {

@@ -1,6 +1,6 @@
 {
 	"name": "@extws/adapter-redis",
-	"version": "0.2.1-dev",
+	"version": "0.4.0-dev",
 	"description": "Redis-based adapter for ExtWS servers",
 	"publishConfig": {
 		"access": "public"
@@ -23,7 +23,7 @@
 		"node": ">=21"
 	},
 	"peerDependencies": {
-		"@extws/server": "github:extws-team/server#48f82f8e050b6d034de84ae579a3308cb47bacb3",
+		"@extws/server": "github:extws-team/server#6edcb183e59273e58d8c495c2902e8c9eb676331",
 		"redis": "^4.6.12"
 	},
 	"devDependencies": {
@@ -55,14 +55,14 @@
 		"url": "git+https://github.com/extws-team/adapter-redis.git"
 	},
 	"keywords": [
-		"websocket",
-		"ws",
-		"networking",
-		"uwebsockets",
 		"extws",
-		"server",
+		"websocket",
+		"redis",
+		"pubsub",
 		"adapter",
-		"redis"
+		"scaling",
+		"cluster",
+		"realtime"
 	],
 	"author": "Daniil Kirichenko (https://twitter.com/kirickme)",
 	"license": "MIT",

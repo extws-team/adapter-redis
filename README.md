@@ -1,6 +1,6 @@
 # @extws/adapter-redis
 
-The Redis adapter enables message synchronization between ExtWS server instances using Redis pub/sub functionality. When you send a message using ExtWS methods (`send`, `broadcast`, etc.`), here's what happens:
+The Redis adapter enables message synchronization between ExtWS server instances using Redis pub/sub functionality. When you send a message using ExtWS server methods (`sendToSocket`, `sendToGroup` and `broadcast`), here's what happens:
 
 1. The adapter on the sending instance publishes the message to Redis
 2. Redis distributes this message to all other connected server instances
@@ -20,21 +20,24 @@ npm install @extws/adapter-redis
 
 ## Usage
 
-To start, create a ExtWS server instance and pass it your instance Redis adapter instance along with a Redis client:
+To start, create a Redis client and an ExtWS server, such as [@extws/server-bun](https://github.com/extws-team/server-bun) or [@extws/server-uws](https://github.com/extws-team/server-uws), then pass both to the Redis adapter:
 
 ```typescript
 import { ExtWSRedisAdapter } from '@extws/adapter-redis';
+import { ExtWSBunServer } from '@extws/server-bun';
 import { createClient } from 'redis';
-import { ExtWSServer } from './my-server';
 
 // Create Redis client
 const redis_client = createClient({
   url: 'redis://localhost:6379',
 });
+redis_client.on('error', console.error);
 await redis_client.connect();
 
 // Create ExtWS server
-const server = new ExtWSServer();
+const server = new ExtWSBunServer({
+  port: 8080,
+});
 
 // Create Redis adapter
 const adapter = new ExtWSRedisAdapter(server, redis_client);
@@ -42,11 +45,25 @@ const adapter = new ExtWSRedisAdapter(server, redis_client);
 
 That's it! Now all messages sent through this server will be automatically sent to other servers using the same Redis adapter.
 
+The adapter publishes messages with the client you pass, and creates its own duplicate of it to receive messages from other servers.
+
+### Stopping
+
+To detach the adapter from the server, for example when stopping it, call the `close` method. It closes the connection the adapter created to receive messages, while the Redis client you passed stays open:
+
+```typescript
+await adapter.close();
+await server.close();
+await redis_client.quit();
+```
+
 ### Write-only mode
 
 In some scenarios, you may only need to send messages from workers without receiving any incoming WebSocket connections. For these cases, you can initialize an empty ExtWS server and connect it to the adapter in write-only mode, eliminating the need for a full WebSocket server setup:
 
 ```typescript
+import { ExtWS } from '@extws/server';
+
 const server = new ExtWS(); // ExtWS server with no real WebSocket server
 const adapter = new ExtWSRedisAdapter(server, redis_client, true);
 

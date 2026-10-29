@@ -1,6 +1,6 @@
 import { CHANNEL_BROADCAST, CHANNEL_GROUP_PREFIX } from '@extws/server/dev';
 import { createClient } from 'redis';
-import { expect, test } from 'vitest';
+import { expect, test, vi } from 'vitest';
 import { ExtWSRedisAdapter } from '../src/main.js';
 import { ExtWSTest } from '../test/server.js';
 
@@ -14,7 +14,7 @@ await pub_client.connect();
 
 const _first_adapter = new ExtWSRedisAdapter(first_server, pub_client);
 
-const _second_adapter = new ExtWSRedisAdapter(second_server, pub_client);
+const second_adapter = new ExtWSRedisAdapter(second_server, pub_client);
 
 // let the sub_client connect
 await new Promise((resolve) => {
@@ -59,4 +59,48 @@ test('broadcast', async () => {
 
 	expect(event.detail.channel_id).toBe(CHANNEL_BROADCAST);
 	expect(event.detail.payload).toBe('4{"foo":"bar"}');
+});
+
+test('failed publish is logged instead of crashing the process', async () => {
+	const closed_client = createClient({
+		url: 'redis://localhost:16379',
+	});
+	await closed_client.connect();
+	await closed_client.disconnect();
+
+	const server = new ExtWSTest();
+	const adapter = new ExtWSRedisAdapter(server, closed_client, true);
+	const console_error = vi.spyOn(console, 'error').mockImplementation(() => {
+		// the error is expected
+	});
+
+	server.broadcast({
+		foo: 'bar',
+	});
+	await new Promise((resolve) => {
+		setTimeout(resolve, 100);
+	});
+
+	expect(console_error).toHaveBeenCalled();
+	console_error.mockRestore();
+	await adapter.close();
+});
+
+test('close', async () => {
+	await second_adapter.close();
+	expect(second_server.has_adapter).toBe(false);
+
+	let is_received = false;
+	second_server.eventTarget.once('test:publish:channel', () => {
+		is_received = true;
+	});
+
+	first_server.broadcast({
+		foo: 'bar',
+	});
+	await new Promise((resolve) => {
+		setTimeout(resolve, 200);
+	});
+
+	expect(is_received).toBe(false);
 });
